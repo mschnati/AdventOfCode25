@@ -1,4 +1,4 @@
-with open("inputs/input_01.txt") as f:
+with open("../inputs/input_01.txt") as f:
     lines = f.readlines()
 
 dial = 50

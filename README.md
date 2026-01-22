@@ -6,7 +6,7 @@
 Programming challenges for Advent of Code 2025.
 Probably mostly in Python due to time constraints.
 
-Day 1: [Python](01.py)
+Day 1: [Python](solutions/01.py)
 
 Day 2: [Python](02.py)
 

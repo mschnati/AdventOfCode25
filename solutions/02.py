@@ -1,7 +1,7 @@
 # Advent of Code 2025 day 2
 # https://adventofcode.com/2025/day/2
 
-with open("inputs/input_02.txt") as f:
+with open("../inputs/input_02.txt") as f:
     ids = f.read().split(',')
 
 def isValid(id: str) -> int:
