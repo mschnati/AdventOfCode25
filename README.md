@@ -12,7 +12,7 @@ Day 2: [Python](solutions/02.py)
 
 Day 3: [C++](solutions/03.cpp)
 
-Day 4: [TBD](solutions/04)
+Day 4: [C++](solutions/04.cpp)
 
 Day 5: [TBD](solutions/05)
 
