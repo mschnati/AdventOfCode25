@@ -4,7 +4,8 @@
 </div>
 
 Programming challenges for Advent of Code 2025.
-Probably mostly in Python due to time constraints.
+
+Mostly in C++ to practice or else Python if short on time.
 
 Day 1: [Python](solutions/01.py)
 
@@ -16,4 +17,4 @@ Day 4: [C++](solutions/04.cpp)
 
 Day 5: [C++](solutions/05.cpp)
 
-Day 6: [TBD](solutions/06)
+Day 6: [C++](solutions/06.cpp)
