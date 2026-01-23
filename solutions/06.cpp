@@ -32,7 +32,7 @@ template <>
 struct std::formatter<Problem> : std::formatter<std::string> {
     auto format(const Problem& p, std::format_context& ctx) const {
         char op_char = (p.op == TIMES) ? '*' : '+';
-        auto out = std::format_to(ctx.out(), "Op: '{}', Nums: [", op_char);
+        auto out = std::format_to(ctx.out(), "Op: '{}', Col: {}, Nums: [", op_char, p.start);
 
         for (size_t i = 0; i < p.nums.size(); ++i) {
             if (i > 0) out = std::format_to(out, ", ");
@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
                 ptr = next_ptr;
             } else {
                 *ptr == add ? problems[col_idx].op = PLUS : problems[col_idx].op = TIMES;
+                problems[col_idx].start = ptr - line.data();
                 ptr++;
             }
             col_idx++;
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
 
     int64_t part1{0};
     for (const auto& problem : problems) {
-        std::println("{}", problem);
+        // std::println("{}", problem);
         int64_t problem_res{0};
         if (problem.op == TIMES) {
             problem_res = 1;
@@ -107,28 +108,15 @@ int main(int argc, char** argv) {
     std::println("Part 1: {}", part1);
 
     // Part 2: Read numbers from top to bottom in a straight line. So whitespace matters
-
-    // parse operations to find index bounds
-    std::vector<Problem> prob_2{};
-    for (int i = 0; i < op_str.length(); i++) {
-        if (op_str[i] == add) {
-            prob_2.push_back({});
-            prob_2.back().op = PLUS;
-            prob_2.back().start = i;
-        } else if (op_str[i] == mult) {
-            prob_2.push_back({});
-            prob_2.back().op = TIMES;
-            prob_2.back().start = i;
-        }
-    }
-    prob_2.push_back({});
-    prob_2.back().start = op_str.length() + 1;
+    // add dummy to stay in bounds
+    problems.push_back({});
+    problems.back().start = op_str.length() + 1;
 
     // iterate column by column and add the result based on the operation
     int64_t part2{0};
-    for (int i = 0; i < prob_2.size() - 1; i++) {
-        int64_t problem_res{ prob_2[i].op == TIMES ? 1 : 0 };
-        for (int j = prob_2[i].start; j < prob_2[i+1].start - 1; j++) {
+    for (int i = 0; i < problems.size() - 1; i++) {
+        int64_t problem_res{ problems[i].op == TIMES ? 1 : 0 };
+        for (int j = problems[i].start; j < problems[i+1].start - 1; j++) {
             int64_t column{0};
             for (int row = 0; row < homework.size() - 1; row++) {
                 if (homework[row][j] != ' ') {
@@ -136,7 +124,7 @@ int main(int argc, char** argv) {
                 }
             }
 
-            if (prob_2[i].op == TIMES) {
+            if (problems[i].op == TIMES) {
                 problem_res *= column;
             } else {
                 problem_res += column;
