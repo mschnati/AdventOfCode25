@@ -42,6 +42,7 @@ std::expected<std::int64_t, std::string> best_digits_value(std::string_view line
             if (*value > joltages[result_idx]) {
                 joltages[result_idx] = *value;
                 current = line_idx + 1;
+                if (joltages[result_idx] == 9) break;
             }
         }
     }
