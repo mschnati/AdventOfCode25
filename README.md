@@ -14,6 +14,6 @@ Day 3: [C++](solutions/03.cpp)
 
 Day 4: [C++](solutions/04.cpp)
 
-Day 5: [TBD](solutions/05)
+Day 5: [C++](solutions/05.cpp)
 
 Day 6: [TBD](solutions/06)
