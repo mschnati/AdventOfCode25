@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 
     int64_t count{0};
     for (int64_t id : ingredients) {
-        /* ~146ms */
+        /* ~146 micro seconds */
         // for (auto range : merged) {
         //     if (id < range.start) break;
         //     if (id <= range.end) {
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
         //     }
         // }
 
-        /* ~78ms */
+        /* ~78 micro seconds */
         auto it = std::upper_bound(merged.begin(), merged.end(), id, 
             [](int64_t val, const Range& r) { return val < r.start; });
 
