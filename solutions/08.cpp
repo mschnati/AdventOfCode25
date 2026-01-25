@@ -23,7 +23,6 @@ struct JBox {
     int64_t x;
     int64_t y;
     int64_t z;
-    int id;
 };
 
 struct Edge {
@@ -35,6 +34,9 @@ struct Edge {
 };
 
 // disjoint set union for union find to track circuits 
+// Union-Find maintains partition of elements into disjoint sets (trees)
+// find() uses path compression to flatten the tree for ~O(1) lookup
+// unite() uses union-by-size to attach the smaller tree to the larger one, keeping trees balanced
 struct DSU {
     std::vector<int> parent;
     std::vector<int> size;
@@ -45,12 +47,14 @@ struct DSU {
         size.assign(n, 1);
     }
 
+    // returns the root of the set containing i, while applying path compression
     int find(int i) {
         if (parent[i] == i)
             return i;
         return parent[i] = find(parent[i]);
     }
 
+    // unites the sets containing i and j using union by size
     void unite(int i, int j) {
         i = find(i);
         j = find(j);
@@ -64,7 +68,7 @@ struct DSU {
 };
 
 int64_t dist(const JBox& p, const JBox& q) {
-    // we just need to compare the distances, so doing the expensize sqrt is actually not necessary,
+    // we just need to compare the distances, so doing the expensive sqrt is actually not necessary,
     // as its monotonic
     return (p.x - q.x)*(p.x - q.x) + (p.y - q.y)*(p.y - q.y) + (p.z - q.z)*(p.z - q.z);
 }
@@ -82,13 +86,11 @@ int main(int argc, char** argv) {
     
     std::string line;
     std::vector<JBox> junctions{};
-    junctions.reserve(2000);
-    int current_id = 0;
+    junctions.reserve(1000);
     // not the cleanest looking but probably the fastest, as the input format is known
     while (getline(input_file, line)) {
         if (line.empty()) break;
         JBox j;
-        j.id = current_id++;
         const char* ptr = line.data();
         const char* end = ptr + line.size();
 
@@ -104,7 +106,6 @@ int main(int argc, char** argv) {
     // pre-calculate size: N * (N-1) / 2
     size_t n = junctions.size();
     edges.reserve(n * (n - 1) / 2);
-
     for (size_t i = 0; i < n; i++) {
         for (size_t j = i + 1; j < n; j++) {
             edges.push_back({i, j, dist(junctions[i], junctions[j])});
@@ -118,13 +119,15 @@ int main(int argc, char** argv) {
 
     DSU dsu(n);
     // connect 1000 closest
-    size_t limit = std::min(edges.size(), static_cast<size_t>(1000));
+    std::println("Total edges: {}", edges.size());
+    size_t limit = (junctions.size() == 1000) ? 1000 : 10;
 
     for (size_t i = 0; i < limit; ++i) {
         dsu.unite(edges[i].u, edges[i].v);
     }
 
     std::vector<int64_t> circuit_sizes;
+    circuit_sizes.reserve(n);
     for (int i = 0; i < n; ++i) {
         // Since we tracked size in the root, we only take sizes from root nodes
         if (dsu.parent[i] == i) {
@@ -138,6 +141,7 @@ int main(int argc, char** argv) {
     int64_t result = circuit_sizes[0] * circuit_sizes[1] * circuit_sizes[2];
     std::println("Top 3 cluster sizes: {}, {}, {}", circuit_sizes[0], circuit_sizes[1], circuit_sizes[2]);
     std::println("Part 1 Result: {}", result);
+
 
     return EXIT_SUCCESS;
 }

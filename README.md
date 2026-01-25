@@ -18,3 +18,7 @@ Day 4: [C++](solutions/04.cpp)
 Day 5: [C++](solutions/05.cpp)
 
 Day 6: [C++](solutions/06.cpp)
+
+Day 7: [C++](solutions/07.cpp)
+
+Day 8: [C++](solutions/08.cpp)
