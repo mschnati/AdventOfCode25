@@ -85,16 +85,12 @@ int main(int argc, char** argv) {
     for (auto [y, x] : std::views::cartesian_product(std::views::iota(0uz, height - 1), std::views::iota(0uz, width))) {
         int64_t t = at(y, x);
         if (t > Tile::Empty) {
-            switch (at(y + 1, x))
-            {
-                case Tile::Splitter:
-                    at(y + 1, x + 1) += t;
-                    at(y + 1, x - 1) += t;
-                    part1++;
-                    break;
-                default:
-                    at(y + 1, x) += t;
-                    break;
+            if (at(y + 1, x) == Tile::Splitter) {
+                at(y + 1, x + 1) += t;
+                at(y + 1, x - 1) += t;
+                part1++;
+            } else {
+                at(y + 1, x) += t;
             }
         }
     }
