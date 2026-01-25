@@ -55,7 +55,7 @@ struct DSU {
     }
 
     // unites the sets containing i and j using union by size
-    void unite(int i, int j) {
+    int unite(int i, int j) {
         i = find(i);
         j = find(j);
         if (i != j) {
@@ -64,6 +64,7 @@ struct DSU {
             parent[j] = i;
             size[i] += size[j];
         }
+        return size[i];
     }
 };
 
@@ -122,7 +123,7 @@ int main(int argc, char** argv) {
     std::println("Total edges: {}", edges.size());
     size_t limit = (junctions.size() == 1000) ? 1000 : 10;
 
-    for (size_t i = 0; i < limit; ++i) {
+    for (size_t i = 0; i < limit; i++) {
         dsu.unite(edges[i].u, edges[i].v);
     }
 
@@ -135,13 +136,22 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Sort descending to find large clusters
+    // Sort descending to find largest clusters
     std::sort(circuit_sizes.rbegin(), circuit_sizes.rend());
 
     int64_t result = circuit_sizes[0] * circuit_sizes[1] * circuit_sizes[2];
     std::println("Top 3 cluster sizes: {}, {}, {}", circuit_sizes[0], circuit_sizes[1], circuit_sizes[2]);
-    std::println("Part 1 Result: {}", result);
+    std::println("Part 1: {}", result);
 
+    // part 2: connect until there is only one set. return multiplication of x-coords of the last two connected ones
+    for (size_t i = limit; i < edges.size(); i++) {
+        if (dsu.unite(edges[i].u, edges[i].v) == n) {
+            int64_t x1{junctions[edges[i].u].x};
+            int64_t x2{junctions[edges[i].v].x};
+            std::println("Part 2: {} * {} = {}", x1, x2, x1*x2);
+            break;
+        }
+    }
 
     return EXIT_SUCCESS;
 }
