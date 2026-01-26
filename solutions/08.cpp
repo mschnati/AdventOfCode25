@@ -16,8 +16,6 @@
 #include <cstdlib>
 #include <charconv>
 #include <numeric>
-#include <algorithm>
-#include <tuple>
 
 struct JBox {
     int64_t x;

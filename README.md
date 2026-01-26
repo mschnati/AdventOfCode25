@@ -22,3 +22,5 @@ Day 6: [C++](solutions/06.cpp)
 Day 7: [C++](solutions/07.cpp)
 
 Day 8: [C++](solutions/08.cpp)
+
+Day 9: [C++](solutions/09.cpp)
