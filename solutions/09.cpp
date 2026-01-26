@@ -16,18 +16,27 @@
 #include <cstdlib>
 #include <charconv>
 #include <numeric>
-
-enum Corner {
-    NONE = -1,
-    TOP_L = 0,
-    TOP_R,
-    BOT_L,
-    BOT_R,
-};
+#include <algorithm>
 
 struct Tile {
     int64_t x;
     int64_t y;
+};
+
+struct Box {
+    int64_t x, y, u, v; // min_x, min_y, max_x, max_y
+
+    // construct normalized box from two points
+    static Box from(Tile p1, Tile p2) {
+        return {
+            std::min(p1.x, p2.x), std::min(p1.y, p2.y),
+            std::max(p1.x, p2.x), std::max(p1.y, p2.y)
+        };
+    }
+
+    int64_t area() const { 
+        return (u - x + 1) * (v - y + 1); 
+    }
 };
 
 int main(int argc, char** argv) {
@@ -56,26 +65,43 @@ int main(int argc, char** argv) {
 
     if (tiles.empty()) return EXIT_SUCCESS;
 
-    // Brute Force: Check every pair of points
-    int64_t max_area = 0;
+    std::vector<Box> lines;
+    std::vector<Box> pairs;
+    size_t n = tiles.size();
 
-    for (size_t i = 0; i < tiles.size(); ++i) {
-        for (size_t j = i + 1; j < tiles.size(); ++j) {
-            const auto& p1 = tiles[i];
-            const auto& p2 = tiles[j];
-
-            int64_t width = std::abs(p1.x - p2.x) + 1;
-            int64_t height = std::abs(p1.y - p2.y) + 1;
-            
-            int64_t area = width * height;
-            
-            if (area > max_area) {
-                max_area = area;
-            }
-        }
+    // generate lines (pairwise in order + wrap around) as Boxes
+    for (size_t i = 0; i < n; ++i) {
+        lines.push_back(Box::from(tiles[i], tiles[(i + 1) % n]));
     }
 
-    std::println("Part 1: {}", max_area);
+    // generate pairs (combinations) as Boxes and sort by area
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = i + 1; j < n; ++j) {
+            pairs.push_back(Box::from(tiles[i], tiles[j]));
+        }
+    }
+    std::sort(pairs.begin(), pairs.end(), [](const Box& a, const Box& b) {
+        return a.area() > b.area();
+    });
+
+    std::println("Part 1: {}", pairs[0].area());
+
+    // Part 2: Find largest rectangle that does not overlap with any line's bounding box
+    for (const auto& rect : pairs) {
+        bool overlap = false;
+        
+        for (const auto& line : lines) {
+            if (line.x < rect.u && line.y < rect.v && line.u > rect.x && line.v > rect.y) {
+                overlap = true;
+                break;
+            }
+        }
+
+        if (!overlap) {
+            std::println("Part 2: {}", rect.area());
+            break; 
+        }
+    }
 
     return EXIT_SUCCESS;
 }
